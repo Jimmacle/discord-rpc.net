@@ -5,10 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="discord-rpc-64.dll.gz" />
     <None Remove="discord-rpc.dll.gz" />
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="discord-rpc-64.dll.gz" />
     <EmbeddedResource Include="discord-rpc.dll.gz" />
   </ItemGroup>
 
