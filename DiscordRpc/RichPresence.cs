@@ -7,7 +7,7 @@ namespace DiscordRpc
 {
     public class RichPresence : IDisposable
     {
-        private const string LibName = "discord-rpc.dll";
+        private string LibName = "discord-rpc.dll";
         private readonly ClearPresenceDel _clearPresence;
         private readonly bool _enableIoThread;
         private readonly IntPtr _hDiscordLib;
@@ -24,6 +24,10 @@ namespace DiscordRpc
 
         public RichPresence()
         {
+            if(Environment.Is64BitProcess)
+            {
+                LibName = "discord-rpc-64.dll";
+            }
             // Embedding the native lib makes deployment easier. TODO possibly embed multiple platforms for a cross-platform release?
             // https://stackoverflow.com/questions/4651803/loading-a-library-dynamically-in-linux-or-osx
             // https://stackoverflow.com/questions/9954548/sigsegv-when-p-invoking-dlopen
@@ -40,10 +44,10 @@ namespace DiscordRpc
                 gz.CopyTo(fs);
             }
 
-            _hDiscordLib = NativeMethods.LoadLibrary(LibName);
+            _hDiscordLib = NativeMethods.LoadLibrary(_tempPath);
 
             if (_hDiscordLib == IntPtr.Zero)
-                throw new TypeLoadException($"Failed to load Discord RPC lib from {LibName}: {NativeMethods.GetLastError()}");
+                throw new TypeLoadException($"Failed to load Discord RPC lib from {LibName}: {NativeMethods.GetLastError()}\nTemp Path: {_tempPath}");
 
             // Marshal methods from native lib
             _initialize = WrapNativeFunction<InitializeDel>(_hDiscordLib, RpcMethods.Initialize);
