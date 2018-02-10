@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="discord-rpc-64.dll.gz" />
+    <None Remove="discord-rpc.dll.gz" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="discord-rpc-64.dll.gz" />
+    <EmbeddedResource Include="discord-rpc.dll.gz" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="discord-rpc.dll">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="powershell -executionpolicy bypass -file &quot;$(ProjectDir)ZipNativeLib.ps1&quot;" />
+  </Target>
+
+</Project>
